@@ -1,0 +1,199 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jay's Love Question</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&family=Bangers&family=Pacifico&family=Poppins:wght@300;400;600&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #fff0f5;
+      --primary: #ff3399;
+      --yes-color: #4CAF50;
+      --no-color: #f44336;
+      --accent: #ff66b2;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-color);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
+      padding: 20px;
+    }
+    .message {
+      position: absolute;
+      font-family: 'Shadows Into Light', cursive;
+      font-size: 2rem;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+    .visible { opacity: 1; }.question-section {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+}
+h2 {
+  font-family: 'Pacifico', cursive;
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+.button-container {
+  display: flex;
+  gap: 1rem;
+}
+button {
+  padding: 0.75rem 1.75rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  font-family: 'Bangers', cursive;
+  position: relative;
+  z-index: 1;
+}
+button:active { transform: scale(0.9); }
+.yes {
+  background-color: var(--yes-color);
+  color: #fff;
+  box-shadow: 0 0 10px var(--yes-color);
+}
+.no {
+  background-color: var(--no-color);
+  color: #fff;
+  box-shadow: 0 0 10px var(--no-color);
+}
+#response {
+  margin-top: 2rem;
+  font-size: 1.6rem;
+  font-family: 'Baloo 2', cursive;
+  opacity: 0;
+  transition: opacity 1s ease-in;
+  z-index: 2;
+}
+.response-step { margin-top: 1rem; }
+
+.try-again {
+  margin-top: 2rem;
+  display: none;
+}
+.try-again button {
+  background-color: var(--accent);
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 10px var(--accent);
+  font-family: 'Baloo 2', cursive;
+}
+
+/* Animations */
+.bounce { animation: bounce 1s ease-in-out; }
+.shake  { animation: shake 0.5s ease-in-out; }
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%     { transform: translateY(-15px); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-10px); }
+  50%      { transform: translateX(10px); }
+  75%      { transform: translateX(-10px); }
+}
+.emoji {
+  position: absolute;
+  font-size: 1.5rem;
+  animation: explode 0.8s forwards;
+  pointer-events: none;
+}
+@keyframes explode {
+  to {
+    transform: translate(var(--x), var(--y)) rotate(720deg) scale(1.5);
+    opacity: 0;
+  }
+}
+
+  </style>
+</head>
+<body>  <div id="text-container">
+    <div class="message" id="msg1">Hi</div>
+    <div class="message" id="msg2">It's me, Jay!</div>
+    <div class="message" id="msg3">Soooooooo</div>
+    <div class="message" id="msg4">I Have A Question</div>
+  </div>  <div class="question-section" id="questionSection">
+    <h2 id="questionText">DO YOU LOVE ME?? 🥺👉👈</h2>
+    <div class="button-container" id="buttonContainer">
+      <button class="yes" onclick="loveYes(this)">YES</button>
+      <button class="no" onclick="loveNo(this)">TANGINAMO</button>
+    </div>
+  </div>  <div id="response"></div>  <div class="try-again" id="tryAgainContainer">
+    <button onclick="location.reload()">🔁 Try Again?</button>
+  </div>  <script>
+    // Show messages sequentially
+    const seq = [ {id:'msg1', delay:0,    dur:2500},
+                  {id:'msg2', delay:3000, dur:3000},
+                  {id:'msg3', delay:7000, dur:2000},
+                  {id:'msg4', delay:9500, dur:3000} ];
+    seq.forEach(item => {
+      setTimeout(() => {
+        const el = document.getElementById(item.id);
+        el.classList.add('visible');
+        setTimeout(() => el.classList.remove('visible'), item.dur);
+      }, item.delay);
+    });
+    setTimeout(() => document.getElementById('questionSection').style.display = 'flex', 13000);
+
+    function disableUI() {
+      document.getElementById('buttonContainer').style.display = 'none';
+      document.getElementById('questionText').style.display = 'none';
+    }
+    function showTryAgain() {
+      document.getElementById('tryAgainContainer').style.display = 'block';
+    }
+    function explodeEmojis(btn, emojis) {
+      const rect = btn.getBoundingClientRect();
+      const cx = rect.left + rect.width/2;
+      const cy = rect.top  + rect.height/2;
+      for(let i=0;i<30;i++){
+        const e = document.createElement('div');
+        e.className = 'emoji';
+        e.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+        e.style.left = cx+'px'; e.style.top = cy+'px';
+        const angle = Math.random()*2*Math.PI;
+        const r = 100 + Math.random()*50;
+        e.style.setProperty('--x', Math.cos(angle)*r+'px');
+        e.style.setProperty('--y', Math.sin(angle)*r+'px');
+        document.body.appendChild(e);
+        setTimeout(() => e.remove(), 1000);
+      }
+    }
+    function loveYes(btn) {
+      explodeEmojis(btn, ['💖','🥺','😘','✨','💕']);
+      disableUI();
+      setTimeout(() => {
+        const r = document.getElementById('response');
+        r.innerHTML = '<div class="response-step bounce">Awwww🥺 THANKYOUUU!😘💗💝✨</div>';
+        r.style.opacity = 1;
+        showTryAgain();
+      }, 2000);
+    }
+    function loveNo(btn) {
+      explodeEmojis(btn, ['💔','😢','😭','😣','🔫']);
+      disableUI();
+      const r = document.getElementById('response');
+      r.innerHTML = '';
+      r.style.opacity = 1;
+      r.classList.add('shake');
+      setTimeout(()=> r.innerHTML += '<div class="response-step">araw kopo.. 😣😭😭😭😭😔😔</div>', 2000);
+      setTimeout(()=> r.innerHTML += '<div class="response-step">🙂🔫</div>', 4000);
+      setTimeout(()=> { r.innerHTML += '<div class="response-step">💀💀💀(dead)</div>'; showTryAgain(); }, 6000);
+    }
+  </script></body>
+</html>
